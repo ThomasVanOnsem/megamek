@@ -8,11 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
-
 import java.util.Vector;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,9 +32,12 @@ public class PlayerTest {
         player.setGame(game);
         rival_player.setGame(game);
         team_player.setGame(game);
+        Entity tank = new Tank();
+        tank.setOwner(player);
+        game.addEntity(tank);
 
-        Entity tankMock = Mockito.mock(Tank.class);
-        Mockito.when(tankMock.calculateBattleValue()).thenReturn(100);
+        Entity tankMock = mock(Tank.class);
+        when(tankMock.calculateBattleValue()).thenReturn(100);
     }
 
     @Test
@@ -147,6 +147,8 @@ public class PlayerTest {
 
         TestCase.assertFalse(player.hasTAG());
         //TODO rest of hasTAG
+
+        TestCase.assertEquals(player.getAirborneVTOL().size(), 0);
     }
 
     @Test
@@ -204,7 +206,7 @@ public class PlayerTest {
         player.setAdmitsDefeat(false);
         TestCase.assertFalse(player.admitsDefeat());
 
-        TestCase.assertEquals(player.getBV(), 0);
+        TestCase.assertEquals(0, player.getBV());
 
         Entity tank = new Tank();
         tank.setOwner(player);
