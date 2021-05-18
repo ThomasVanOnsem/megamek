@@ -50,6 +50,7 @@ public class GameOptions extends AbstractOptions {
     @Override
     public synchronized void initialize() {
         IBasicOptionGroup base = addGroup("basic"); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_COMPETITIVE, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_FRIENDLY_FIRE, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT, false); //$NON-NLS-1$
         addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_FIRING, false); //$NON-NLS-1$

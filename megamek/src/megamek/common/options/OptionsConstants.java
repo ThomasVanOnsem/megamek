@@ -273,6 +273,7 @@ public class OptionsConstants {
     
     
     //GAME OPTIONS TO BE MOVED.
+    public static final String BASE_COMPETITIVE = "competitive";  //$NON-NLS$
     public static final String BASE_FRIENDLY_FIRE= "friendly_fire";  //$NON-NLS$
     public static final String BASE_TURN_TIMER = "turn_timer"; //$NON-NLS$
     public static final String BASE_SKIP_INELIGABLE_MOVEMENT= "skip_ineligable_movement";  //$NON-NLS$
