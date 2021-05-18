@@ -23,7 +23,7 @@ import megamek.common.util.AbstractCommandLineParser;
 public class DedicatedServer {
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
     private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t "
-            + "[-password <pass>] [-port <port>] [<saved game>]";
+            + "[-password <pass>] [-port <port>] [-competitive <competitive>] [<saved game>]";
 
     public static void start(String[] args) {
         CommandLineParser cp = new CommandLineParser(args);
@@ -38,6 +38,7 @@ public class DedicatedServer {
             }
             String announceUrl = cp.getAnnounceUrl();
             String password = cp.getPassword();
+            boolean competitive = cp.getCompetitive();
 
             // kick off a RNG check
             megamek.common.Compute.d6();
@@ -47,7 +48,7 @@ public class DedicatedServer {
                 if (password == null || password.length() == 0) {
                     password = PreferenceManager.getClientPreferences().getLastServerPass();
                 }
-                dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl);
+                dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl, competitive);
             } catch (IOException ex) {
                 MegaMek.getLogger().error("Error: could not start server at localhost" + ":" + usePort + " ("
                         + ex.getMessage() + ").");
@@ -70,12 +71,14 @@ public class DedicatedServer {
         private String gameFilename;
         private int port;
         private String password;
+        private boolean competitive;
         private String announceUrl = "";
 
         // Options
         private static final String OPTION_PORT = "port";
         private static final String OPTION_PASSWORD = "password";
         private static final String OPTION_ANNOUNCE = "announce";
+        private static final String OPTION_COMPETITIVE = "competitive";
 
         public CommandLineParser(String[] args) {
             super(args);
@@ -99,6 +102,10 @@ public class DedicatedServer {
 
         public String getAnnounceUrl() {
             return announceUrl;
+        }
+
+        public boolean getCompetitive() {
+            return competitive;
         }
 
         /**
@@ -127,6 +134,10 @@ public class DedicatedServer {
                         case OPTION_PASSWORD:
                             nextToken();
                             parsePassword();
+                            break;
+                        case OPTION_COMPETITIVE:
+                            nextToken();
+                            parseCompetitive();
                             break;
                     }
                     break;
@@ -172,6 +183,14 @@ public class DedicatedServer {
         private void parsePassword() throws ParseException {
             if (getToken() == TOK_LITERAL) {
                 password = getTokenValue();
+            } else {
+                throw new ParseException("password expected");
+            }
+        }
+
+        private void parseCompetitive() throws ParseException {
+            if (getToken() == TOK_LITERAL) {
+                competitive = Boolean.parseBoolean(getTokenValue());
             } else {
                 throw new ParseException("password expected");
             }
