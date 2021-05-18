@@ -99,8 +99,7 @@ import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameVictoryEvent;
+import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
@@ -551,6 +550,13 @@ public class Server implements Runnable {
         for (GameListener listener : gameListenersClone) {
             getGame().addGameListener(listener);
         }
+
+        game.addGameListener(new GameListenerAdapter() {
+            @Override
+            public void gameEnd(GameEndEvent e) {
+                RankingCalculator.updateRankings(e);
+            }
+        });
 
         List<Integer> orphanEntities = new ArrayList<>();
                 
