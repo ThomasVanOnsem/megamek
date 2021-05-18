@@ -853,6 +853,7 @@ public class Server implements Runnable {
     private void receivePlayerName(Packet packet, int connId) {
         final IConnection conn = getPendingConnection(connId);
         String name = (String) packet.getObject(0);
+        String password = (String) packet.getObject(1);
         boolean returning = false;
 
         // this had better be from a pending connection

@@ -79,6 +79,7 @@ public class Client implements IClientCommandHandler {
 
     // we need these to communicate with the server
     private String name;
+    private String password;
 
     private IConnection connection;
 
@@ -189,6 +190,11 @@ public class Client implements IClientCommandHandler {
         }
 
     };
+
+    public Client(String name, String host, int port, String password) {
+        this(name, host, port);
+        this.password = password;
+    }
 
     /**
      * Construct a client which will try to connect. If the connection fails, it
@@ -1267,7 +1273,11 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SERVER_GREETING:
             connected = true;
-            send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+            Object[] clientData = new Object[2];
+            clientData[0] = name;
+            clientData[1] = password;
+            send(new Packet(Packet.COMMAND_CLIENT_NAME, clientData));
+
             Object[] versionData = new Object[2];
             versionData[0] = MegaMek.VERSION;
             versionData[1] = MegaMek.getMegaMekSHA256();
