@@ -34,6 +34,8 @@ public final class Player extends TurnOrdered implements IPlayer {
     private String name;
     private int id;
 
+    private int ranking;
+
     private int team = TEAM_NONE;
 
     private boolean done = false; // done with phase
