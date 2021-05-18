@@ -222,6 +222,8 @@ public class Server implements Runnable {
 
     private String motd;
 
+    private boolean competitive;
+
     private static class ReceivedPacket {
         public int connId;
         public Packet packet;
@@ -413,6 +415,12 @@ public class Server implements Runnable {
 
     public Server(String password, int port) throws IOException {
         this(password, port, false, "");
+    }
+
+    public Server(String password, int port, boolean registerWithServerBrowser,
+                  String metaServerUrl, boolean competitive) throws IOException {
+        this(password, port, registerWithServerBrowser, metaServerUrl);
+        this.competitive = competitive;
     }
 
     /**
