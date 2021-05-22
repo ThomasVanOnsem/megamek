@@ -4,10 +4,14 @@ import junit.framework.TestCase;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import static org.mockito.Mockito.mock;
@@ -21,6 +25,11 @@ public class PlayerTest {
     private Player rival_player;
     private Player team_player;
     private Game game;
+    private Entity mockedTank;
+    private Game mockedGame;
+    private GameOptions mockedOptions;
+    private Crew mockedCrew;
+    private VTOL mockedVTOL;
 
 
     @Before
@@ -36,8 +45,11 @@ public class PlayerTest {
         tank.setOwner(player);
         game.addEntity(tank);
 
-        Entity tankMock = mock(Tank.class);
-        when(tankMock.calculateBattleValue()).thenReturn(100);
+        mockedTank = mock(Tank.class);
+        mockedGame = mock(Game.class);
+        mockedOptions = mock(GameOptions.class);
+        mockedCrew = mock(Crew.class);
+        mockedVTOL = mock(VTOL.class);
     }
 
     @Test
@@ -78,8 +90,6 @@ public class PlayerTest {
         TestCase.assertEquals(4, player.getNbrMFInferno());
         player.setNbrMFVibra(5);
         TestCase.assertEquals(5, player.getNbrMFVibra());
-
-        //TODO try to break code? because no checks ever done
     }
 
     @Test
@@ -91,7 +101,6 @@ public class PlayerTest {
         TestCase.assertEquals(PlayerColour.BLUE, player.getColour());
         player.setColour(PlayerColour.BROWN);
         TestCase.assertEquals(PlayerColour.BROWN, player.getColour());
-        // TODO catch exception
     }
 
     @Test
@@ -146,9 +155,38 @@ public class PlayerTest {
         TestCase.assertTrue(player.isGhost());
 
         TestCase.assertFalse(player.hasTAG());
-        //TODO rest of hasTAG
+        Game game2 = new Game();
+        Player player2 = new Player(2, "player_name_2");
+        game2.addPlayer(2, player2);
+        game2.addEntity(new Tank());
+        TestCase.assertFalse(player2.hasTAG());
 
-        TestCase.assertEquals(player.getAirborneVTOL().size(), 0);
+        Entity tank2 = new Tank();
+        tank2.setOwner(player);
+        game2.addEntity(tank2);
+        TestCase.assertFalse(player2.hasTAG());
+
+        Game game3 = new Game();
+        Player player3 = new Player(3, "player_name_3");
+        player3.setGame(game3);
+        when(mockedTank.hasTAG()).thenReturn(true);
+        when(mockedTank.getOwner()).thenReturn(player3);
+        game3.addEntity(mockedTank);
+        TestCase.assertTrue(player3.hasTAG());
+
+        TestCase.assertEquals(0, player.getAirborneVTOL().size());
+        Player player4 = new Player(4, "player_4");
+        player4.setGame(mockedGame);
+        List<Entity> lst = new ArrayList<>();
+        lst.add(mockedVTOL);
+        when(mockedVTOL.getMovementMode()).thenReturn(EntityMovementMode.WIGE);
+        when(mockedVTOL.getElevation()).thenReturn(10);
+        when(mockedVTOL.getOwner()).thenReturn(player4);
+        when(mockedGame.getEntitiesVector()).thenReturn(lst);
+        TestCase.assertEquals(1, player4.getAirborneVTOL().size());
+
+        player.setRanking(500);
+        TestCase.assertEquals(500, player.getRanking());
     }
 
     @Test
@@ -219,7 +257,14 @@ public class PlayerTest {
         TestCase.assertEquals(5, player.getInitialBV());
 
         TestCase.assertEquals(0, player.getFledBV());
-
+        Player player1 = new Player(2, "player_2");
+        Vector<Entity> fled = new Vector<>();
+        fled.add(mockedTank);
+        when(mockedGame.getRetreatedEntities()).thenReturn(fled.elements());
+        when(mockedTank.getOwner()).thenReturn(player1);
+        when(mockedTank.calculateBattleValue()).thenReturn(100);
+        player1.setGame(mockedGame);
+        TestCase.assertEquals(100, player1.getFledBV());
     }
 
     @Test
@@ -240,10 +285,38 @@ public class PlayerTest {
         game.addEntity(tank);
         game.setOptions(new GameOptions());
 
+        Player player_2 = new Player(2, "player_2");
+        when(mockedGame.getEntitiesVector()).thenReturn(null);
+        player_2.setGame(mockedGame);
+        TestCase.assertEquals(0, player_2.getTurnInitBonus());
+        when(mockedTank.getOwner()).thenReturn(player_2);
+        when(mockedGame.getOptions()).thenReturn(mockedOptions);
+        when(mockedOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)).thenReturn(true);
+        when(mockedTank.getHQIniBonus()).thenReturn(10);
+        when(mockedTank.getQuirkIniBonus()).thenReturn(20);
+        List<Entity> lst = new ArrayList<>();
+        lst.add(mockedTank);
+        when(mockedGame.getEntitiesVector()).thenReturn(lst);
+        TestCase.assertEquals(30, player_2.getTurnInitBonus());
+
         player.setGame(null);
         TestCase.assertEquals(0, player.getCommandBonus());
         player.setGame(game);
         TestCase.assertEquals(0, player.getCommandBonus());
+
+        Player player_3 = new Player(3, "player_3");
+        when(mockedTank.getOwner()).thenReturn(player_3);
+        when(mockedTank.isDeployed()).thenReturn(true);
+        when(mockedTank.isOffBoard()).thenReturn(false);
+        when(mockedTank.getCrew()).thenReturn(mockedCrew);
+        when(mockedCrew.isActive()).thenReturn(true);
+        when(mockedCrew.getCommandBonus()).thenReturn(10);
+        when(mockedCrew.hasActiveTechOfficer()).thenReturn(true);
+        when(mockedTank.isCaptured()).thenReturn(false);
+        when(mockedOptions.booleanOption(OptionsConstants.RPG_COMMAND_INIT)).thenReturn(true);
+        player_3.setGame(mockedGame);
+
+        TestCase.assertEquals(12, player_3.getCommandBonus());
 
     }
 }
