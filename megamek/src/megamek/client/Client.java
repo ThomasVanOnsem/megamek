@@ -121,6 +121,9 @@ public class Client implements IClientCommandHandler {
     //Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;
 
+    private boolean testing = false;
+    private ArrayList<Packet> testingOutPackets = new ArrayList<>();
+
     //board view for getting entity art assets
     private BoardView1 bv;
 
@@ -1219,12 +1222,23 @@ public class Client implements IClientCommandHandler {
         }
     }
 
+    public void setTesting(boolean testing) {
+        this.testing = testing;
+    }
+
+    public ArrayList<Packet> getTestingOutPackets() {
+        return testingOutPackets;
+    }
+
     /**
      * send the message to the server
      */
     protected void send(Packet packet) {
         if (connection != null) {
             connection.send(packet);
+        }
+        if (testing) {
+            testingOutPackets.add(packet);
         }
     }
 
