@@ -587,4 +587,8 @@ public final class Player extends TurnOrdered implements IPlayer {
     public String toString() {
         return "Player " + getId() + " (" + getName() + ")";
     }
+
+    public void setRanking(int r){ranking = r;}
+
+    public int getRanking(){ return ranking;}
 }

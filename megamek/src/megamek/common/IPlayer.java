@@ -194,4 +194,8 @@ public interface IPlayer extends ITurnOrdered {
     boolean equals(Object obj);
     
     int hashCode();
+
+    void setRanking(int r);
+
+    int getRanking();
 }
