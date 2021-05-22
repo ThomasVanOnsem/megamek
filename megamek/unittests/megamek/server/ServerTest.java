@@ -3,6 +3,7 @@ package megamek.server;
 import junit.framework.TestCase;
 import megamek.common.*;
 import megamek.common.event.GameListener;
+import megamek.common.net.Packet;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ public class ServerTest {
     public void testServerConstructor() throws IOException {
         Server server = makeCompetitiveServer();
         TestCase.assertTrue(server.isCompetitive());
+        server.die();
     }
 
     @Test
@@ -55,5 +57,22 @@ public class ServerTest {
         TestCase.assertEquals(1, listeners.size());
         boolean isRankingGameListener = listeners.get(0) instanceof RankingCalculator.RankingGameListener;
         TestCase.assertTrue(isRankingGameListener);
+
+        server.die();
     }
+
+    Packet makeClientNamePacket() {
+        Object[] object = new Object[2];
+        object[0] = "max";
+        object[1] = "pass";
+        return new Packet(Packet.COMMAND_CLIENT_NAME, object);
+    }
+
+    @Test
+    public void testReceivePlayerName() throws IOException {
+        Server server = makeCompetitiveServer();
+        server.handle(0, makeClientNamePacket());
+        server.die();
+    }
+
 }

@@ -26,9 +26,4 @@ public class DedicatedServerTest {
         TestCase.assertFalse(cp.getCompetitive());
     }
 
-    @Test
-    public void testDedicatedServer() {
-        DedicatedServer.start(new String[]{"-password", "pass", "-port", "1234"});
-    }
-
 }
