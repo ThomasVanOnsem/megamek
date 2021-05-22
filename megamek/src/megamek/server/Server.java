@@ -547,16 +547,16 @@ public class Server implements Runnable {
 
         game = g;
 
+        boolean rankingListenerPresent = false;
         for (GameListener listener : gameListenersClone) {
             getGame().addGameListener(listener);
-        }
-
-        game.addGameListener(new GameListenerAdapter() {
-            @Override
-            public void gameEnd(GameEndEvent e) {
-                RankingCalculator.updateRankings(e);
+            if (listener instanceof RankingCalculator.RankingGameListener) {
+                rankingListenerPresent = true;
             }
-        });
+        }
+        if (! rankingListenerPresent && competitive) {
+            getGame().addGameListener(new RankingCalculator.RankingGameListener());
+        }
 
         List<Integer> orphanEntities = new ArrayList<>();
                 

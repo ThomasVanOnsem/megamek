@@ -1,6 +1,7 @@
 package megamek.common;
 
 import megamek.common.event.GameEndEvent;
+import megamek.common.event.GameListenerAdapter;
 
 public class RankingCalculator {
 
@@ -17,6 +18,13 @@ public class RankingCalculator {
      */
     public static void notifyClientDisconnect(){
 
+    }
+
+    public static class RankingGameListener extends GameListenerAdapter {
+        @Override
+        public void gameEnd(GameEndEvent e) {
+            RankingCalculator.updateRankings(e);
+        }
     }
 
 }
