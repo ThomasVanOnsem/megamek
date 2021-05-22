@@ -422,6 +422,9 @@ public class Client implements IClientCommandHandler {
         return game.getBoard();
     }
 
+
+    public String getPassword() { return password; }
+
     /**
      * Returns an enumeration of the entities in game.entities
      */
