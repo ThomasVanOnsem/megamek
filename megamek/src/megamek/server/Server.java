@@ -1146,6 +1146,9 @@ public class Server implements Runnable {
         if (0 == game.getNoOfPlayers()) {
             resetGame();
         }
+        else{
+            RankingCalculator.notifyClientDisconnect();
+        }
     }
 
     /**
