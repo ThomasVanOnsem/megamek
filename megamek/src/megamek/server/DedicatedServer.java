@@ -67,11 +67,11 @@ public class DedicatedServer {
         start(args);
     }
 
-    private static class CommandLineParser extends AbstractCommandLineParser {
+    public static class CommandLineParser extends AbstractCommandLineParser {
         private String gameFilename;
         private int port;
         private String password;
-        private boolean competitive;
+        private boolean competitive = false;
         private String announceUrl = "";
 
         // Options
