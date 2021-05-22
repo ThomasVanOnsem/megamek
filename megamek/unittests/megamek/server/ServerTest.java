@@ -71,7 +71,20 @@ public class ServerTest {
     @Test
     public void testReceivePlayerName() throws IOException {
         Server server = makeCompetitiveServer();
-        server.handle(0, makeClientNamePacket());
+        server.receivePlayerName(makeClientNamePacket(), 0);
+        server.die();
+    }
+
+    @Test
+    public void testDisconnected() throws IOException {
+        Server server = makeCompetitiveServer();
+        Player player = new Player(0, "Max");
+        server.getGame().addPlayer(0, player);
+        Player player2 = new Player(1, "Thomas");
+        server.getGame().addPlayer(1, player2);
+
+        server.disconnected(player);
+        server.disconnected(player2);
         server.die();
     }
 

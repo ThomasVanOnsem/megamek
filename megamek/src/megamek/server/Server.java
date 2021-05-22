@@ -860,7 +860,7 @@ public class Server implements Runnable {
      * Receives a player name, sent from a pending connection, and connects that
      * connection.
      */
-    private void receivePlayerName(Packet packet, int connId) {
+    protected void receivePlayerName(Packet packet, int connId) {
         final IConnection conn = getPendingConnection(connId);
         String name = (String) packet.getObject(0);
         String password = (String) packet.getObject(1);
