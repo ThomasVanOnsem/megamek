@@ -1,22 +1,59 @@
 package megamek.server;
 
 import junit.framework.TestCase;
-import megamek.common.Game;
+import megamek.common.*;
+import megamek.common.event.GameListener;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+
+import java.io.IOException;
+import java.util.List;
 
 public class ServerTest {
 
+    Server makeCompetitiveServer() throws IOException {
+        return new Server("test", 1234, false, "", true);
+    }
+
     @Test
-    public void testServer(){
-        try{
-            Server server = new Server("test", 1);
-            server.setGame(new Game());
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        TestCase.assertEquals(1, 1);
+    public void testServerConstructor() throws IOException {
+        Server server = makeCompetitiveServer();
+        TestCase.assertTrue(server.isCompetitive());
+    }
+
+    @Test
+    public void testSetGame() throws IOException {
+        Server server = makeCompetitiveServer();
+        Game game = new Game();
+        Player player = new Player(0, "Max");
+
+        // Add mech
+        Entity entity = new MechWarrior();
+        entity.setOwner(player);
+        game.addEntity(entity);
+
+        // Add aero
+        entity = new Aero();
+        entity.setOwner(player);
+        game.addEntity(entity);
+
+        // Add aero without owner, will be orphan entity and not counted
+        game.addEntity(new Aero());
+
+        // Add tank
+        entity = new Tank();
+        entity.setOwner(player);
+        game.addEntity(entity);
+
+        // Set game
+        server.setGame(game);
+
+        // 1 mech, 1 aero and 1 tank
+        TestCase.assertEquals(3, server.getGame().getNoOfEntities());
+
+        // Ranking calculator was added because of competitiveness
+        List<GameListener> listeners = server.getGame().getGameListeners();
+        TestCase.assertEquals(1, listeners.size());
+        boolean isRankingGameListener = listeners.get(0) instanceof RankingCalculator.RankingGameListener;
+        TestCase.assertTrue(isRankingGameListener);
     }
 }
