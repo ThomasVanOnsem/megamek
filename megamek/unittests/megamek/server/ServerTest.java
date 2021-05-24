@@ -12,7 +12,7 @@ import java.util.List;
 public class ServerTest {
 
     Server makeCompetitiveServer() throws IOException {
-        return new Server("test", 1234, false, "", true);
+        return new Server("test", 1235, false, "", true);
     }
 
     @Test
