@@ -548,19 +548,8 @@ public class Server implements Runnable {
     public void setGame(IGame g) {
         // game listeners are transient so we need to save and restore them
         Vector<GameListener> gameListenersClone = new Vector<>(getGame().getGameListeners());
-
         game = g;
-
-        boolean rankingListenerPresent = false;
-        for (GameListener listener : gameListenersClone) {
-            getGame().addGameListener(listener);
-            if (listener instanceof RankingCalculator.RankingGameListener) {
-                rankingListenerPresent = true;
-            }
-        }
-        if (! rankingListenerPresent && competitive) {
-            getGame().addGameListener(new RankingCalculator.RankingGameListener());
-        }
+        restoreGameListeners(gameListenersClone);
 
         List<Integer> orphanEntities = new ArrayList<>();
                 
@@ -601,6 +590,19 @@ public class Server implements Runnable {
             }
         }
 
+    }
+
+    private void restoreGameListeners(Vector<GameListener> listeners) {
+        boolean rankingListenerPresent = false;
+        for (GameListener listener : listeners) {
+            getGame().addGameListener(listener);
+            if (listener instanceof RankingCalculator.RankingGameListener) {
+                rankingListenerPresent = true;
+            }
+        }
+        if (! rankingListenerPresent && competitive) {
+            getGame().addGameListener(new RankingCalculator.RankingGameListener());
+        }
     }
 
     /**
