@@ -5,6 +5,8 @@ import megamek.common.event.GameListenerAdapter;
 
 public class RankingCalculator {
 
+    private RankingCalculator() {}
+
     /**
      * Update the ranking of the player during the end of the game.
      * @param e
