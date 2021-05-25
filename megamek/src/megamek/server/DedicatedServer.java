@@ -43,15 +43,8 @@ public class DedicatedServer {
             // kick off a RNG check
             megamek.common.Compute.d6();
             // start server
-            Server dedicated;
-            try {
-                if (password == null || password.length() == 0) {
-                    password = PreferenceManager.getClientPreferences().getLastServerPass();
-                }
-                dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl, competitive);
-            } catch (IOException ex) {
-                MegaMek.getLogger().error("Error: could not start server at localhost" + ":" + usePort + " ("
-                        + ex.getMessage() + ").");
+            Server dedicated = startServer(password, usePort, announceUrl, competitive);
+            if (dedicated == null) {
                 return;
             }
             if (null != saveGameFileName) {
@@ -61,6 +54,21 @@ public class DedicatedServer {
             MegaMek.getLogger().error(INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
                             + ARGUMENTS_DESCRIPTION_MESSAGE);
         }
+    }
+
+    public static Server startServer(String password, int usePort, String announceUrl, boolean competitive) {
+        Server dedicated;
+        try {
+            if (password == null || password.length() == 0) {
+                password = PreferenceManager.getClientPreferences().getLastServerPass();
+            }
+            dedicated = new Server(password, usePort, !announceUrl.equals(""), announceUrl, competitive);
+        } catch (IOException ex) {
+            MegaMek.getLogger().error("Error: could not start server at localhost" + ":" + usePort + " ("
+                    + ex.getMessage() + ").");
+            return null;
+        }
+        return dedicated;
     }
 
     public static void main(String[] args) {

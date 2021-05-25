@@ -26,4 +26,11 @@ public class DedicatedServerTest {
         TestCase.assertFalse(cp.getCompetitive());
     }
 
+    @Test
+    public void testMakeServer() {
+        Server server = DedicatedServer.startServer("pass", 1236, "", true);
+        TestCase.assertNotNull(server);
+        server.die();
+    }
+
 }
