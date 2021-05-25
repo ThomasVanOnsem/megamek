@@ -71,6 +71,7 @@ public class ServerTest {
     @Test
     public void testReceivePlayerName() throws IOException {
         Server server = makeCompetitiveServer();
+        TestCase.assertNotNull(server);
         server.receivePlayerName(makeClientNamePacket(), 0);
         server.die();
     }
@@ -85,6 +86,7 @@ public class ServerTest {
 
         server.disconnected(player);
         server.disconnected(player2);
+        TestCase.assertEquals(0, server.getGame().getNoOfPlayers());
         server.die();
     }
 
